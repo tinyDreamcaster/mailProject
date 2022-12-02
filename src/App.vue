@@ -1,30 +1,91 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view/>
+  <div class="mailWrapper">
+
+    <ul class="navigateList">
+      <li class="navigateList__item">
+        <button @click="messagesStore = $store.state.incomings; messagesType = 'incomings'">Входящие</button>
+      </li>
+      <li class="navigateList__item">
+        <button @click="messagesStore = $store.state.sents; messagesType = 'sents'">Исходящие</button>
+      </li>
+      <li class="navigateList__item">
+        <button @click="messagesStore = $store.state.drafts; messagesType = 'drafts'">Черновик</button>
+      </li>
+    </ul>
+
+    <message-list :messages="messagesStore" 
+    :messagesType="messagesType" 
+    @newMessages="messagesUpdate" />
+
+    <new-message-form />
+
+  </div>
+  <button @click="sentAllMessages">Отправить все</button>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import MessageList from '@/components/MessageList.vue'
+import NewMessageForm from '@/components/NewMessageForm.vue'
+export default {
+  components: { MessageList, NewMessageForm },
+  data() {
+    return {
+      messagesStore: [],
+      messagesType: ''
+    }
+  },
 
-nav {
-  padding: 30px;
+  methods: {
+    sentAllMessages() {
+      this.$store.commit('sentAll');
+      this.messagesStore = this.$store.state.drafts;
+    },
+    messagesUpdate(updateType) {
+      switch (updateType) {
+        case 'incomings':
+        this.messagesStore = this.$store.state.incomings;
+          break;
+        case 'sents':
+        this.messagesStore = this.$store.state.sents;
+          break;
+        case 'drafts':
+        this.messagesStore = this.$store.state.drafts;
+          break;
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
+        default:
+          break;
+      }
     }
   }
+}
+
+
+</script>
+
+
+<style lang="scss">
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.mailWrapper {
+  display: flex;
+}
+
+.navigateList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+
+}
+
+.navigateList__item {
+  border: 1px solid black;
+  text-align: center;
+  max-width: 10rem;
+  padding: 1rem;
+
 }
 </style>
