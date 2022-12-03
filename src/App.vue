@@ -20,7 +20,8 @@
     <new-message-form />
 
   </div>
-  <button @click="sentAllMessages">Отправить все</button>
+  <button @click="sentAllMessages();
+          messagesUpdate('drafts')" >Отправить все</button>
 </template>
 
 <script>
@@ -38,7 +39,6 @@ export default {
   methods: {
     sentAllMessages() {
       this.$store.commit('sentAll');
-      this.messagesStore = this.$store.state.drafts;
     },
     messagesUpdate(updateType) {
       switch (updateType) {
